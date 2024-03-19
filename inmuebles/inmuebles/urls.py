@@ -19,5 +19,7 @@ from django.urls import path,include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('inmueble/', include('inmuebleslist_app.api.urls')),
+    path('tienda/', include('inmuebleslist_app.api.urls')),
+    path('account/', include('user_app.api.urls')),
+    #path('api-auth', include('rest_framework.urls')),
 ]

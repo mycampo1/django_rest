@@ -1,9 +1,15 @@
 from rest_framework import serializers
-from inmuebleslist_app.models import Edificacion, Empresa
+from inmuebleslist_app.models import Edificacion, Empresa, Comentario
         
+class ComentarioSerializer(serializers.ModelSerializer):
+    comentario_user = serializers.StringRelatedField(read_only=True)
+    class Meta:
+        model= Comentario
+        exclude = ['edificacion']
+        #fields = '__all__'
 
 class EdificacionSerializer(serializers.ModelSerializer):
-    
+    comentarios = ComentarioSerializer(many=True, read_only=True)
     class Meta:
         model = Edificacion
         fields = '__all__'
@@ -11,7 +17,7 @@ class EdificacionSerializer(serializers.ModelSerializer):
         #exclude = ['id']
 
 
-class EmpresaSerializer(serializers.HyperlinkedModelSerializer):
+class EmpresaSerializer(serializers.ModelSerializer):
     edificacionlist = EdificacionSerializer(many=True, read_only=True)
     #edificacionlist = serializers.StringRelatedField(many=True)
     #edificacionlist = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
