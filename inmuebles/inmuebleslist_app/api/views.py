@@ -9,10 +9,27 @@ from rest_framework import viewsets
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
-from inmuebleslist_app.api.permissions import AdminOrReadOnly, ComentarioUserOrReadOnly
+from inmuebleslist_app.api.permissions import IsAdminOrReadOnly, IsComentarioUserOrReadOnly
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle, ScopedRateThrottle
+from inmuebleslist_app.api.throttling import ComentarioCreateThrottle, ComentarioListThrottle
+
+
+class UsuarioComentario(generics.ListAPIView):
+    serializer_class = ComentarioSerializer
+    
+    # def get_queryset(self):
+    #     username = self.kwargs['username']
+    #     return Comentario.objects.filter(comentario_user__username=username)
+    
+    def get_queryset(self):
+        username = self.request.query_params.get('username', None)
+        return Comentario.objects.filter(comentario_user__username=username)
+
 
 class ComentarioCreate(generics.CreateAPIView):
     serializer_class = ComentarioSerializer
+    permission_classes = [IsAuthenticated]
+    throttle_classes = [ComentarioCreateThrottle]
     
     def get_queryset(self):
         return Comentario.objects.all()
@@ -40,17 +57,20 @@ class ComentarioCreate(generics.CreateAPIView):
 class ComentarioList(generics.ListCreateAPIView):
     # queryset = Comentario.objects.all()
     serializer_class = ComentarioSerializer
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
+    throttle_classes = [ComentarioListThrottle, AnonRateThrottle]
 
     def get_queryset(self):
         pk = self.kwargs['pk']
         return Comentario.objects.filter(edificacion=pk)
-    
+
+
 class ComentarioDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comentario.objects.all()
     serializer_class = ComentarioSerializer
-    permission_classes = [ComentarioUserOrReadOnly]
-
+    permission_classes = [IsComentarioUserOrReadOnly]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'comentario-detail'
 # class ComentarioList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
 #     queryset = Comentario.objects.all()
 #     serializer_class = ComentarioSerializer
@@ -70,7 +90,8 @@ class ComentarioDetail(generics.RetrieveUpdateDestroyAPIView):
     
 
 class EmpresaVS(viewsets.ModelViewSet):
-    permission_classes = [AdminOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly]
+    
     queryset = Empresa.objects.all()
     serializer_class = EmpresaSerializer
 
@@ -167,7 +188,8 @@ class EmpresaDetalleAV(APIView):
     
 
 class EdificacionListAV(APIView):
-
+    permission_classes = [IsAdminOrReadOnly]
+    
     def get(self, request):
         edificacion = Edificacion.objects.all()
         serializer = EdificacionSerializer(edificacion, many = True)
@@ -182,6 +204,8 @@ class EdificacionListAV(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 class EdificacionDetalleAV(APIView):
+    permission_classes = [IsAdminOrReadOnly
+                          ]
     def get(self, request, pk):
         try:
             edificacion = Edificacion.objects.get(pk=pk)

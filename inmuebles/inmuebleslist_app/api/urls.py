@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 #from inmuebleslist_app.api.views import inmueble_list, inmuble_detalle
 from inmuebleslist_app.api.views import (EdificacionListAV, EdificacionDetalleAV, EmpresaAV,
                                          EmpresaDetalleAV, ComentarioList, ComentarioDetail, ComentarioCreate,
-                                         EmpresaVS)
+                                         EmpresaVS, UsuarioComentario)
 
 
 router = DefaultRouter()
@@ -12,6 +12,7 @@ router.register('empresa', EmpresaVS, basename='empresa')
 urlpatterns =[
     path('edificacion/', EdificacionListAV.as_view(), name='edificacion'),
     path('edificacion/<int:pk>', EdificacionDetalleAV.as_view(), name='edificacion-detail'),
+    
     path('', include(router.urls)),
     
     # path('empresa/', EmpresaAV.as_view(), name='empresa'),
@@ -20,4 +21,7 @@ urlpatterns =[
     path('edificacion/<int:pk>/comentario-create/', ComentarioCreate.as_view(), name='comentario-create'),
     path('edificacion/<int:pk>/comentario/', ComentarioList.as_view(), name='comentario-list'),
     path('edificacion/comentario/<int:pk>', ComentarioDetail.as_view(), name='comentario-detail'),
+    
+    #path('edificacion/comentarios/<str:username>/', UsuarioComentario.as_view(), name='usuario-comentario-detail'),
+    path('edificacion/comentarios/', UsuarioComentario.as_view(), name='usuario-comentario-detail'),
 ]
