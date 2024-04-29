@@ -12,6 +12,10 @@ from rest_framework.permissions import IsAuthenticated
 from inmuebleslist_app.api.permissions import IsAdminOrReadOnly, IsComentarioUserOrReadOnly
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle, ScopedRateThrottle
 from inmuebleslist_app.api.throttling import ComentarioCreateThrottle, ComentarioListThrottle
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
+from inmuebleslist_app.api.pagination import EdificacionPagination, EdificacionLOPagination
+
 
 
 class UsuarioComentario(generics.ListAPIView):
@@ -59,6 +63,9 @@ class ComentarioList(generics.ListCreateAPIView):
     serializer_class = ComentarioSerializer
     #permission_classes = [IsAuthenticated]
     throttle_classes = [ComentarioListThrottle, AnonRateThrottle]
+    
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['comentario_user__usermane', 'active']
 
     def get_queryset(self):
         pk = self.kwargs['pk']
@@ -186,8 +193,14 @@ class EmpresaDetalleAV(APIView):
         empresa.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
+class EdificacionList(generics.ListAPIView):
+    queryset = Edificacion.objects.all()
+    serializer_class = EdificacionSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['direccion','empresa__nombre']
+    pagination_class = EdificacionPagination
 
-class EdificacionListAV(APIView):
+class EdificacionAV(APIView):
     permission_classes = [IsAdminOrReadOnly]
     
     def get(self, request):

@@ -1,16 +1,20 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 #from inmuebleslist_app.api.views import inmueble_list, inmuble_detalle
-from inmuebleslist_app.api.views import (EdificacionListAV, EdificacionDetalleAV, EmpresaAV,
+from inmuebleslist_app.api.views import (EdificacionAV, EdificacionDetalleAV, EmpresaAV,
                                          EmpresaDetalleAV, ComentarioList, ComentarioDetail, ComentarioCreate,
-                                         EmpresaVS, UsuarioComentario)
+                                         EmpresaVS, UsuarioComentario, EdificacionList)
 
 
 router = DefaultRouter()
 router.register('empresa', EmpresaVS, basename='empresa')
 
 urlpatterns =[
-    path('edificacion/', EdificacionListAV.as_view(), name='edificacion'),
+    path('edificacion/', EdificacionAV.as_view(), name='edificacion'),
+    
+    path('edificacion/list/', EdificacionList.as_view(), name='edificacion-list'),
+    
+    
     path('edificacion/<int:pk>', EdificacionDetalleAV.as_view(), name='edificacion-detail'),
     
     path('', include(router.urls)),
@@ -24,4 +28,5 @@ urlpatterns =[
     
     #path('edificacion/comentarios/<str:username>/', UsuarioComentario.as_view(), name='usuario-comentario-detail'),
     path('edificacion/comentarios/', UsuarioComentario.as_view(), name='usuario-comentario-detail'),
+    
 ]

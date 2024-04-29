@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'user_app',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -72,6 +74,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'inmuebles.wsgi.application'
+
+AUTH_USER_MODEL = 'user_app.Account'
 
 
 # Database
@@ -145,14 +149,21 @@ REST_FRAMEWORK = {
     #     'rest_framework.throttling.UserRateThrottle',
     # ],
     'DEFAULT_THROTTLE_RATES':{
-        'anon': '5/day',
-        'user': '10/day',
-        'comentario-create': '2/day',
-        'comentario-list': '8/day',
-        'comentario-detail': '3/day',
-    }
+        'anon': '50000000/day',
+        'user': '100000/day',
+        'comentario-create': '200000/day',
+        'comentario-list': '800000000/day',
+        'comentario-detail': '3000000000/day',
+    },
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    # 'PAGE_SIZE': 1,
 }
 
 SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=365),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=365),
 }

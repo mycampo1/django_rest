@@ -10,6 +10,9 @@ class ComentarioSerializer(serializers.ModelSerializer):
 
 class EdificacionSerializer(serializers.ModelSerializer):
     comentarios = ComentarioSerializer(many=True, read_only=True)
+    
+    empresa_nombre = serializers.CharField(source='empresa.nombre')
+    
     class Meta:
         model = Edificacion
         fields = '__all__'
