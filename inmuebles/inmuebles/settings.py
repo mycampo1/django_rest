@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-j!*@1l7bv6247d8-5ux#efgi9axpee#up!8tp77*lx*rqg=3tv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'user_app',
     'django_filters',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +55,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddle'
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'inmuebles.urls'
@@ -136,10 +138,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
+STATIC_ROOT=os.path.join(BASE_DIR, 'staticfiles')
+
 STATIC_URL = 'static/'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
